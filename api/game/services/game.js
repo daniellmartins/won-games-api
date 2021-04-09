@@ -6,6 +6,7 @@
  */
 
 const axios = require("axios");
+const slugify = require("slugify");
 
 async function getGameInfo(slug) {
   const jsdom = require("jsdom");
@@ -30,6 +31,22 @@ module.exports = {
       data: { products },
     } = await axios.get(gogApiUrl);
 
-    console.log(await getGameInfo(products[0].slug));
+    console.log(products[0]);
+
+    await strapi.services.publisher.create({
+      name: products[0].publisher,
+      slug: slugify(products[0].publisher, {
+        lower: true,
+      }).replace(".", ""),
+    });
+
+    await strapi.services.developer.create({
+      name: products[0].developer,
+      slug: slugify(products[0].developer, {
+        lower: true,
+      }).replace(".", ""),
+    });
+
+    // console.log(await getGameInfo(products[0].slug));
   },
 };
